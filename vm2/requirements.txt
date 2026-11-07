@@ -1,0 +1,5 @@
+pyspark==3.3.4
+pandas>=2.0.0
+pyarrow>=14.0.0
+kafka-python>=2.0.2
+python-dateutil>=2.8.2

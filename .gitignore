@@ -1,0 +1,32 @@
+# Python artifacts
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+dist/
+*.egg-info/
+
+# Virtual Environments
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Spark, Hadoop & Iceberg artifacts
+metastore_db/
+derby.log
+*.log
+checkpoints/
+.checkpoint/
+warehouse/
+
+# IDE & OS files
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
