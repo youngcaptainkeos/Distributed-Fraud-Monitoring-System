@@ -1,0 +1,11 @@
+# run1 (baseline) - VM1 part
+- Run ID: run1
+- Git commit (producer): 39af19a
+- Kafka: topic transactions-run1, 1 partition, RF 1, 2000 messages (1990 unique transaction_id)
+- Scenario: baseline, ordered on-time delivery, 0.05 s/row, 2026-11-10 07:38:45 to 07:40:30 UTC (104.6 s)
+- Event disorder: none (input sorted; 0 rows behind running max)
+- Topic verifier: PASS (see run1_topic_verify.txt)
+- Spark / Storage / Verifier: filled by Shashank and Vijeth
+- Evidence: run1_baseline_arrival.csv, run1_baseline_summary.json, run1_producer.log
+- Partitions: 1 (deliberate). Kafka orders only within a partition, so one partition keeps the baseline in file order. To be agreed with Shashank.
+- Limitation: single broker, replication factor 1, no broker fault tolerance.

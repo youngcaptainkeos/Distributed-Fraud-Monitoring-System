@@ -1,0 +1,81 @@
+== versions
+Description:	Ubuntu 24.04.4 LTS
+aarch64
+openjdk version "11.0.32.1" 2026-08-18
+Python 3.12.3
+3.9.2
+   /___/ .__/\_,_/_/ /_/\_\   version 3.3.4
+== broker config
+process.roles=broker,controller
+node.id=1
+controller.quorum.voters=1@localhost:9093
+listeners=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+advertised.listeners=PLAINTEXT://<ZT_IP>:9092
+inter.broker.listener.name=PLAINTEXT
+controller.listener.names=CONTROLLER
+listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+log.dirs=/home/pes1ug24cs509/kafka-data
+num.partitions=1
+offsets.topic.replication.factor=1
+transaction.state.log.replication.factor=1
+transaction.state.log.min.isr=1
+auto.create.topics.enable=false
+log.retention.hours=168
+== topics
+Topic: transactions-run1	TopicId: AfSaZVe_QVuhSNd6jSOpbA	PartitionCount: 1	ReplicationFactor: 1	Configs: 
+	Topic: transactions-run1	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+Topic: __consumer_offsets	TopicId: R5wOcg0PSuaM11aAgluBVg	PartitionCount: 50	ReplicationFactor: 1	Configs: compression.type=producer,cleanup.policy=compact,segment.bytes=104857600
+	Topic: __consumer_offsets	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 1	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 2	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 3	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 4	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 5	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 6	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 7	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 8	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 9	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 10	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 11	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 12	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 13	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 14	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 15	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 16	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 17	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 18	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 19	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 20	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 21	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 22	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 23	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 24	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 25	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 26	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 27	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 28	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 29	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 30	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 31	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 32	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 33	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 34	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 35	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 36	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 37	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 38	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 39	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 40	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 41	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 42	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 43	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 44	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 45	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 46	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 47	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 48	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+	Topic: __consumer_offsets	Partition: 49	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+== run1 end offset
+transactions-run1:0:2000
+== input checksum
+980dd52388d1c4088e4806abd9efd70cb407ed0e9421113f3b25c3095b33d1a3  /home/pes1ug24cs509/fraud/data/transactions.orig.csv

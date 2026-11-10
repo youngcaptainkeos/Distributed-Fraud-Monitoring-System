@@ -1,0 +1,15 @@
+process.roles=broker,controller
+node.id=1
+controller.quorum.voters=1@localhost:9093
+listeners=PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+advertised.listeners=PLAINTEXT://<VM1_PRIVATE_IP>:9092
+inter.broker.listener.name=PLAINTEXT
+controller.listener.names=CONTROLLER
+listener.security.protocol.map=CONTROLLER:PLAINTEXT,PLAINTEXT:PLAINTEXT
+log.dirs=/home/pes1ug24cs509/kafka-data
+num.partitions=1
+offsets.topic.replication.factor=1
+transaction.state.log.replication.factor=1
+transaction.state.log.min.isr=1
+auto.create.topics.enable=false
+log.retention.hours=168

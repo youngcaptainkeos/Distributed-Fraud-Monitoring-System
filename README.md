@@ -157,7 +157,7 @@ When an account breaches R2, R3, or R4 in an active window $[W_{\text{start}}, W
 ### Step 2: Start Message Broker (VM1)
 1. Start Kafka broker:
    ```bash
-   kafka-server-start.sh -daemon $KAFKA_HOME/config/kraft/server.properties
+   $KAFKA_HOME/bin/kafka-server-start.sh -daemon ~/fraud/configs/server-fraud.properties   # see vm1/README.md
    ```
 2. Create run topic:
    ```bash
@@ -185,7 +185,7 @@ cd vm2
 ### Step 5: Start Ingestion Producer (VM1)
 Stream payments continuously:
 ```bash
-python3 producer.py --topic transactions-run1 --file data/transactions.csv
+python3 vm1/producer.py --mode baseline --topic transactions-run1 --run-id run1 --input data/transactions.csv   # see vm1/README.md
 ```
 
 ### Step 6: Start Dashboard (VM4)
