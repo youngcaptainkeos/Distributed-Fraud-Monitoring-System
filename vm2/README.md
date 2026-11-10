@@ -35,6 +35,7 @@ vm2/
 │   └── submit_job.sh              # spark-submit with Iceberg 1.4.1 & Kafka packages
 ├── tests/
 │   ├── __init__.py
+│   ├── sim_batches.py             # Micro-batch stream simulation against Ground Truth
 │   └── test_rules.py              # Unit test suite verifying against Ground Truth
 ├── README.md                      # Component guide
 └── requirements.txt               # Dependencies

@@ -14,7 +14,9 @@ if [ -f "${STREAMING_DIR}/config/.env" ]; then
 fi
 
 SPARK_HOME=${SPARK_HOME:-/home/shashank/opt/spark}
-SPARK_MASTER=${SPARK_MASTER_URL:-local[*]}
+ZT_IP=$(ip -4 addr show ztr2qxeeov 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+){3}' || true)
+DRIVER_HOST=${SPARK_DRIVER_HOST:-${ZT_IP:-172.23.124.232}}
+SPARK_MASTER=${SPARK_MASTER_URL:-spark://${DRIVER_HOST}:7077}
 RUN_ID=${RUN_ID:-run1}
 
 # Package coordinates for Spark 3.3.4 (Scala 2.12)
@@ -26,6 +28,7 @@ echo "=========================================================="
 echo " Submitting Fraud Detection Engine (VM2 Driver)"
 echo " Run ID: ${RUN_ID}"
 echo " Spark Master: ${SPARK_MASTER}"
+echo " Driver Host (ZeroTier): ${DRIVER_HOST}"
 echo " Packages: ${PACKAGES}"
 echo "=========================================================="
 
@@ -37,9 +40,10 @@ export PYTHONPATH="${STREAMING_DIR}:${PYTHONPATH}"
     --master "${SPARK_MASTER}" \
     --name "FraudDetectionEngine-${RUN_ID}" \
     --packages "${PACKAGES}" \
+    --conf "spark.driver.host=${DRIVER_HOST}" \
     --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" \
     --conf "spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog" \
     --conf "spark.sql.catalog.iceberg.type=hadoop" \
-    --conf "spark.sql.catalog.iceberg.warehouse=${ICEBERG_WAREHOUSE:-hdfs://localhost:9000/warehouse}" \
+    --conf "spark.sql.catalog.iceberg.warehouse=${ICEBERG_WAREHOUSE:-hdfs://172.23.222.173:9000/warehouse}" \
     --conf "spark.sql.session.timeZone=UTC" \
     app/stream_job.py

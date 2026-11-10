@@ -1,14 +1,13 @@
 """Schema definitions for PySpark Structured Streaming fraud detection pipeline.
 
 Contains explicit StructType schemas for:
-1. Inbound Kafka JSON transaction events
+1. Inbound Kafka JSON transaction events (all StringType to handle quoted/unquoted JSON)
 2. Apache Iceberg target table: transaction_decisions
 3. Apache Iceberg target table: account_risk_alerts
 """
 
 from pyspark.sql.types import (
     BooleanType,
-    DecimalType,
     DoubleType,
     IntegerType,
     LongType,
@@ -19,22 +18,24 @@ from pyspark.sql.types import (
 )
 
 # Inbound Kafka transaction payload schema
+# Every field is declared as StringType because JSON serializers may quote numeric values.
+# Type casting is performed explicitly in the streaming pipeline.
 KAFKA_TRANSACTION_SCHEMA = StructType([
     StructField("event_id", StringType(), True),
     StructField("transaction_id", StringType(), False),
     StructField("user_id", StringType(), True),
     StructField("customer_id", StringType(), True),
-    StructField("source_account", LongType(), True),
-    StructField("destination_account", LongType(), True),
+    StructField("source_account", StringType(), True),
+    StructField("destination_account", StringType(), True),
     StructField("merchant_id", StringType(), True),
     StructField("device_id", StringType(), True),
     StructField("event_timestamp", StringType(), False),
-    StructField("amount", DoubleType(), False),
+    StructField("amount", StringType(), False),
     StructField("currency", StringType(), False),
     StructField("transaction_type", StringType(), True),
     StructField("location", StringType(), True),
     StructField("channel", StringType(), True),
-    StructField("account_age_days", IntegerType(), True),
+    StructField("account_age_days", StringType(), True),
 ])
 
 # Iceberg Table 1: transaction_decisions (one row per transaction)

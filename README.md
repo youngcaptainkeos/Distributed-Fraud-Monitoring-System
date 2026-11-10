@@ -161,7 +161,7 @@ When an account breaches R2, R3, or R4 in an active window $[W_{\text{start}}, W
    ```
 2. Create run topic:
    ```bash
-   kafka-topics.sh --bootstrap-server localhost:9092 --create --topic transactions-run1 --partitions 2 --replication-factor 1
+   kafka-topics.sh --bootstrap-server localhost:9092 --create --topic transactions-run1 --partitions 1 --replication-factor 1
    ```
 
 ### Step 3: Launch Spark Master & Workers (VM2, VM3, VM4)

@@ -2,15 +2,16 @@
 
 Runs exclusively on VM2 (Spark Master/Driver).
 - Ingests payment events from Apache Kafka (VM1)
-- Parses JSON using explicit schema
+- Parses JSON with explicit StringType schema and casts to target types
 - Applies 1-minute event-time watermark and deduplication on transaction_id
-- Evaluates fraud rules R1–R5 over rolling 2-min windows (30s slide)
-- Writes outputs to Apache Iceberg tables backed by HDFS (VM3)
+- Evaluates fraud rules R1–R5 over rolling 2-min windows (30s slide) across cumulative history
+- Writes outputs to Apache Iceberg tables backed by HDFS (VM3) with MERGE INTO idempotency
 - Checkpoints state strictly to HDFS
 """
 
 import logging
 import sys
+import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json, to_timestamp
 
@@ -29,6 +30,15 @@ logging.basicConfig(
     format="%(asctime)s [%(levelname)s] %(name)s: %(message)s"
 )
 logger = logging.getLogger("FraudMonitoringJob")
+
+EVENT_COLS = [
+    "transaction_id",
+    "source_account",
+    "destination_account",
+    "event_timestamp",
+    "amount",
+    "currency",
+]
 
 
 def build_spark_session() -> SparkSession:
@@ -64,7 +74,12 @@ def build_spark_session() -> SparkSession:
 
 
 def process_micro_batch(batch_df, batch_id: int):
-    """Processes each streaming micro-batch with deduplication, R1–R5 rules, and Iceberg write."""
+    """Processes each streaming micro-batch.
+    
+    Evaluates cumulative window state by combining previously stored events
+    with newly arrived records, ensuring sliding windows spanning micro-batches
+    and late arrivals (< 1 min) are accurately resolved and updated via MERGE.
+    """
     if batch_df.rdd.isEmpty():
         logger.info("[Batch %d] Empty batch received; skipping.", batch_id)
         return
@@ -72,20 +87,33 @@ def process_micro_batch(batch_df, batch_id: int):
     logger.info("[Batch %d] Processing micro-batch with %d records.", batch_id, batch_df.count())
     spark = batch_df.sparkSession
 
-    # Convert Spark DataFrame to pandas for deterministic sliding-window fraud rule evaluation
-    pdf = batch_df.toPandas()
+    # Select event columns from the current micro-batch
+    new_pdf = batch_df.select(*EVENT_COLS).toPandas()
+    if new_pdf.empty:
+        return
 
-    # Drop any in-batch duplicates on transaction_id
-    pdf_dedup = pdf.drop_duplicates(subset=["transaction_id"]).reset_index(drop=True)
+    # Read previously stored events from the Iceberg decisions table to maintain cross-batch window state
+    try:
+        stored = spark.table(config.decisions_table).select(*EVENT_COLS).toPandas()
+    except Exception as e:
+        logger.info("[Batch %d] No existing decisions table found (%s); starting with current batch.", batch_id, e)
+        stored = pd.DataFrame(columns=EVENT_COLS)
 
-    # Evaluate R1–R5 rules, sliding windows, and alert linkages
-    df_decisions, df_alerts = evaluate_batch(pdf_dedup)
+    # Combine historical events with new micro-batch events
+    all_pdf = (
+        pd.concat([stored, new_pdf], ignore_index=True)
+        .drop_duplicates(subset=["transaction_id"])
+        .reset_index(drop=True)
+    )
 
-    # Convert back to PySpark DataFrames with strict schemas
+    # Re-evaluate R1–R5 rules, sliding windows, and alert linkages across cumulative stream
+    df_decisions, df_alerts = evaluate_batch(all_pdf)
+
+    # Convert evaluated results back to PySpark DataFrames with strict schemas
     spark_decisions = spark.createDataFrame(df_decisions, schema=TRANSACTION_DECISIONS_SCHEMA)
     spark_alerts = spark.createDataFrame(df_alerts, schema=ACCOUNT_RISK_ALERTS_SCHEMA)
 
-    # Idempotent write to Iceberg tables on HDFS
+    # Idempotent write to Iceberg tables on HDFS (MERGE INTO by primary keys)
     write_micro_batch_to_iceberg(
         spark=spark,
         decisions_df=spark_decisions,
@@ -95,7 +123,7 @@ def process_micro_batch(batch_df, batch_id: int):
         alerts_table=config.alerts_table,
         use_merge=True
     )
-    logger.info("[Batch %d] Successfully wrote %d decisions and %d alerts to Iceberg.",
+    logger.info("[Batch %d] Successfully updated %d decisions and %d alerts in Iceberg.",
                 batch_id, len(df_decisions), len(df_alerts))
 
 
@@ -108,11 +136,8 @@ def main():
     spark = build_spark_session()
     spark.sparkContext.setLogLevel("WARN")
 
-    # Initialize Iceberg tables if needed
-    try:
-        initialize_iceberg_tables(spark, config.decisions_table, config.alerts_table)
-    except Exception as e:
-        logger.warning("Table initialization warning (tables may already exist): %s", e)
+    # Initialize Iceberg tables
+    initialize_iceberg_tables(spark, config.decisions_table, config.alerts_table)
 
     # 1. Read Kafka streaming source
     logger.info("Subscribing to Kafka topic: %s", config.kafka_topic)
@@ -125,23 +150,27 @@ def main():
         .load()
     )
 
-    # 2. Parse JSON payload and enforce explicit schema
+    # 2. Parse JSON payload with StringType schema and explicitly cast columns
     parsed_stream = (
         kafka_raw_stream
         .selectExpr("CAST(value AS STRING) as json_val")
         .select(from_json(col("json_val"), KAFKA_TRANSACTION_SCHEMA).alias("data"))
         .select("data.*")
         .withColumn("event_timestamp", to_timestamp(col("event_timestamp")))
+        .withColumn("source_account", col("source_account").cast("long"))
+        .withColumn("destination_account", col("destination_account").cast("long"))
+        .withColumn("amount", col("amount").cast("double"))
+        .withColumn("account_age_days", col("account_age_days").cast("int"))
     )
 
-    # 3. Apply 1-minute event-time watermark and deduplication
+    # 3. Apply 1-minute event-time watermark and deduplication on transaction_id
     watermarked_stream = (
         parsed_stream
         .withWatermark("event_timestamp", config.watermark_delay)
         .dropDuplicates(["transaction_id", "event_timestamp"])
     )
 
-    # 4. Write stream using foreachBatch to evaluate rules and sink to Iceberg
+    # 4. Write stream using foreachBatch to evaluate rules cumulatively and sink to Iceberg
     query = (
         watermarked_stream
         .writeStream
