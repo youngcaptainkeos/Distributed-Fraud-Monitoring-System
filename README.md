@@ -56,6 +56,12 @@ The system scores each transaction as it arrives, applies event-time sliding-win
 .
 ├── .gitignore
 ├── README.md                      # System overview and architecture guide
+├── requirements.txt               # Python dependencies
+├── data/
+│   ├── transactions.csv
+│   ├── ground_truth_transaction_decisions.csv
+│   └── ground_truth_account_risk_alerts.csv
+├── evidence/                       # Baseline and experiment documentation
 ├── vm1/                           # Data Ingestion: Kafka broker setup & producer scripts
 │   └── README.md
 ├── vm2/                           # Fraud Detection Engine: Spark Master, Driver & Rules
@@ -79,9 +85,19 @@ The system scores each transaction as it arrives, applies event-time sliding-win
 │   ├── requirements.txt
 │   └── README.md
 ├── vm3/                           # Storage & Correctness: HDFS, Iceberg & Automated Verifier
-│   └── README.md
-└── vm4/                           # Dashboard & Observability: Streamlit investigation app
-    └── README.md
+│   ├── README.md
+│   ├── scripts/
+│   │   └── capture_system_snapshot.sh
+│   └── verifier/
+│       ├── verify_all.py
+│       ├── verify_r1.py ... verify_r5.py
+│       └── reports/
+└── vm4/                           # Dashboard & Observability
+    ├── README.md
+    └── dashboard/
+        ├── app.py
+        ├── iceberg_source.py
+        └── start_sql_server.sh
 ```
 
 ---
@@ -189,17 +205,18 @@ python3 vm1/producer.py --mode baseline --topic transactions-run1 --run-id run1 
 ```
 
 ### Step 6: Start Dashboard (VM4)
+From the repository root, activate the Python environment with the project dependencies installed, then run:
 ```bash
-cd vm4
-streamlit run dashboard.py --server.port 8501
+streamlit run vm4/dashboard/app.py --server.port 8501
 ```
+The dashboard starts in DEMO mode by default. LIVE mode requires populated Iceberg tables and a working Spark SQL Thrift Server.
 
 ### Step 7: Run Automated Verifier (VM3)
-Compare generated Iceberg tables against ground truth:
+Run the independent input and R1–R5 ground-truth verification suite from the repository root:
 ```bash
-cd vm3
-python3 verifier.py --run run1
+python3 vm3/verifier/verify_all.py
 ```
+Generated verification reports are stored in `vm3/verifier/reports/`.
 
 ---
 
@@ -212,3 +229,29 @@ python3 verifier.py --run run1
 | **Exp 2: Master Kill** | Terminate Master & Driver on VM2; restart with **same checkpoint** and **same run ID** | Job resumes from HDFS checkpoint without data loss or duplicate records (enforced via idempotent `MERGE INTO`). |
 | **Exp 3: Delay < 1 min** | Producer delays selected events by $< 60$ seconds | Events fall within the 1-minute watermark buffer; all events processed into proper windows matching ground truth. |
 | **Exp 4: Delay > 1 min** | Producer delays selected events by $> 60$ seconds | Events older than the watermark threshold are dropped; verifier flags dropped events vs ground truth. |
+
+---
+
+## 7. Implementation & Validation Status
+
+| Component | Status |
+| :--- | :--- |
+| Input and ground-truth validation | PASS |
+| Independent R1–R5 verification | PASS |
+| Verification report generation | PASS |
+| Streamlit dashboard startup | PASS |
+| Dashboard DEMO mode | PASS |
+| Local HDFS infrastructure | Tested |
+| Spark SQL Thrift Server connectivity | Tested |
+| Populated Iceberg streaming tables | Pending |
+| Distributed Kafka–Spark–Iceberg baseline | Pending |
+| Fault-recovery and disorder experiments | Pending |
+| Full end-to-end distributed integration | Pending |
+
+The independent verifier validates the supplied transaction dataset against its ground-truth results. Dashboard DEMO mode uses the supplied ground-truth CSV files.
+
+Successful verifier and DEMO dashboard runs do not, by themselves, establish successful end-to-end distributed stream processing.
+
+### Deployment Note
+
+VM1–VM4 describe logical project roles. During development and testing, multiple logical roles may share a physical machine. The intended distributed deployment uses separate machines connected over the network.
