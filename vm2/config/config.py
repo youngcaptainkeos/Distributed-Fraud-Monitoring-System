@@ -20,7 +20,8 @@ class AppConfig:
     kafka_starting_offsets: str = os.getenv("KAFKA_STARTING_OFFSETS", "earliest")
 
     # Spark cluster configuration (VM2 Master)
-    spark_master_url: str = os.getenv("SPARK_MASTER_URL", "local[*]")
+    # Default to empty string so spark-submit --master is preserved unless explicitly set
+    spark_master_url: str = os.getenv("SPARK_MASTER_URL", "")
     spark_app_name: str = os.getenv("SPARK_APP_NAME", f"FraudDetectionEngine-{os.getenv('RUN_ID', 'run1')}")
 
     # Storage & Iceberg catalog configuration (VM3 HDFS)

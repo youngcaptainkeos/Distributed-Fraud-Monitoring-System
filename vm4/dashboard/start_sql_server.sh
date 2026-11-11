@@ -16,16 +16,17 @@ if [[ ! -x "$SPARK_HOME/sbin/start-thriftserver.sh" ]]; then
     exit 1
 fi
 
-"$SPARK_HOME/sbin/start-thriftserver.sh" \\
-  --master "local[1]" \\
-  --driver-memory 1g \\
-  --packages org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.4.1 \\
-  --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \\
-  --conf spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog \\
-  --conf spark.sql.catalog.iceberg.type=hadoop \\
-  --conf "spark.sql.catalog.iceberg.warehouse=$HDFS_WAREHOUSE" \\
-  --conf spark.sql.session.timeZone=UTC \\
-  --conf "spark.driver.host=$SPARK_LOCAL_IP" \\
-  --hiveconf hive.server2.thrift.port=10000 \\
-  --hiveconf hive.server2.thrift.bind.host=127.0.0.1 \\
+"$SPARK_HOME/sbin/start-thriftserver.sh" \
+  --master "local[1]" \
+  --driver-memory 1g \
+  --packages org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.4.1 \
+  --conf spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions \
+  --conf spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog \
+  --conf spark.sql.catalog.iceberg.type=hadoop \
+  --conf "spark.sql.catalog.iceberg.warehouse=$HDFS_WAREHOUSE" \
+  --conf spark.sql.session.timeZone=UTC \
+  --conf "spark.driver.host=$SPARK_LOCAL_IP" \
+  --hiveconf hive.server2.thrift.port=10000 \
+  --hiveconf hive.server2.thrift.bind.host=127.0.0.1 \
   --hiveconf hive.server2.enable.doAs=false
+

@@ -24,11 +24,17 @@ KAFKA_PKG="org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.4"
 ICEBERG_PKG="org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.4.1"
 PACKAGES="${KAFKA_PKG},${ICEBERG_PKG}"
 
+export SPARK_MASTER_URL="${SPARK_MASTER}"
+export PYSPARK_DRIVER_PYTHON="${PYSPARK_DRIVER_PYTHON:-/home/shashank/opt/python3.10/bin/python3.10}"
+export PYSPARK_PYTHON="${PYSPARK_PYTHON:-/usr/bin/python3.10}"
+
 echo "=========================================================="
 echo " Submitting Fraud Detection Engine (VM2 Driver)"
 echo " Run ID: ${RUN_ID}"
 echo " Spark Master: ${SPARK_MASTER}"
 echo " Driver Host (ZeroTier): ${DRIVER_HOST}"
+echo " Driver Python: ${PYSPARK_DRIVER_PYTHON}"
+echo " Worker Python: ${PYSPARK_PYTHON}"
 echo " Packages: ${PACKAGES}"
 echo "=========================================================="
 
@@ -45,9 +51,12 @@ zip -q -r /tmp/fraud_engine_modules.zip app config
     --packages "${PACKAGES}" \
     --py-files /tmp/fraud_engine_modules.zip \
     --conf "spark.driver.host=${DRIVER_HOST}" \
+    --conf "spark.pyspark.driver.python=${PYSPARK_DRIVER_PYTHON}" \
+    --conf "spark.pyspark.python=${PYSPARK_PYTHON}" \
     --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" \
     --conf "spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog" \
     --conf "spark.sql.catalog.iceberg.type=hadoop" \
     --conf "spark.sql.catalog.iceberg.warehouse=${ICEBERG_WAREHOUSE:-hdfs://172.23.138.248:9000/warehouse}" \
     --conf "spark.sql.session.timeZone=UTC" \
     app/stream_job.py
+

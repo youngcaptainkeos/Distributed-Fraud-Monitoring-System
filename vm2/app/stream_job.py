@@ -43,11 +43,13 @@ EVENT_COLS = [
 
 def build_spark_session() -> SparkSession:
     """Builds and configures the SparkSession with Iceberg catalog and extensions."""
-    logger.info("Initializing SparkSession on Master: %s", config.spark_master_url)
+    logger.info("Initializing SparkSession (configured master: '%s')", config.spark_master_url or "from spark-submit")
+    builder = SparkSession.builder.appName(config.spark_app_name)
+    if config.spark_master_url:
+        builder = builder.master(config.spark_master_url)
+
     builder = (
-        SparkSession.builder
-        .appName(config.spark_app_name)
-        .master(config.spark_master_url)
+        builder
         # Iceberg SQL Extensions
         .config(
             "spark.sql.extensions",

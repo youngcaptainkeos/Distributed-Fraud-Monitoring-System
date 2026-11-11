@@ -2,6 +2,7 @@ import argparse
 import csv
 import json
 import os
+import sys
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -535,6 +536,14 @@ def main():
     print("\n========================================")
     print(" VERIFICATION FINISHED")
     print("========================================")
+
+    passed = (
+        input_report.get("status") == "PASSED"
+        and ground_truth_report.get("status") == "PASSED"
+        and (not args.actual_decisions or report.get("decision_comparison", {}).get("status") == "PASSED")
+        and (not args.actual_alerts or report.get("alert_comparison", {}).get("status") == "PASSED")
+    )
+    sys.exit(0 if passed else 1)
 
 
 if __name__ == "__main__":
