@@ -113,10 +113,21 @@ def process_micro_batch(batch_df, batch_id: int):
 
     # Convert evaluated results back to PySpark DataFrames with strict schemas
     spark_decisions = spark.createDataFrame(df_decisions, schema=TRANSACTION_DECISIONS_SCHEMA)
-    spark_alerts = (
-        spark.createDataFrame(df_alerts, schema=ACCOUNT_RISK_ALERTS_SCHEMA)
-        if not df_alerts.empty else None
-    )
+    if not df_alerts.empty:
+        records_alerts = df_alerts.to_dict(orient="records")
+        for r in records_alerts:
+            for k, v in r.items():
+                if pd.isna(v):
+                    r[k] = None
+                elif isinstance(v, pd.Timestamp):
+                    r[k] = v.to_pydatetime()
+                elif k in ("source_account", "destination_account", "observed_count", "count_threshold") and v is not None:
+                    r[k] = int(v)
+                elif k in ("observed_amount_inr", "amount_threshold_inr") and v is not None:
+                    r[k] = float(v)
+        spark_alerts = spark.createDataFrame(records_alerts, schema=ACCOUNT_RISK_ALERTS_SCHEMA)
+    else:
+        spark_alerts = None
 
     # Idempotent write to Iceberg tables on HDFS (MERGE INTO by primary keys)
     write_micro_batch_to_iceberg(
