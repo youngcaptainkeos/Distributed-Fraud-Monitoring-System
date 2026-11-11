@@ -36,10 +36,14 @@ cd "${STREAMING_DIR}"
 
 export PYTHONPATH="${STREAMING_DIR}:${PYTHONPATH}"
 
+# Package application modules so remote executors on VM4 can import them cleanly
+zip -q -r /tmp/fraud_engine_modules.zip app config
+
 "${SPARK_HOME}/bin/spark-submit" \
     --master "${SPARK_MASTER}" \
     --name "FraudDetectionEngine-${RUN_ID}" \
     --packages "${PACKAGES}" \
+    --py-files /tmp/fraud_engine_modules.zip \
     --conf "spark.driver.host=${DRIVER_HOST}" \
     --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" \
     --conf "spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog" \
