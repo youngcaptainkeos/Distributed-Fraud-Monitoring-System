@@ -20,6 +20,16 @@ def initialize_iceberg_tables(spark: SparkSession, decisions_table: str, alerts_
     """Ensures Iceberg tables are created in the catalog with proper schemas."""
     logger.info("Initializing Iceberg tables: %s and %s", decisions_table, alerts_table)
 
+    # Ensure namespace exists (e.g. iceberg.default)
+    parts = decisions_table.split(".")
+    if len(parts) > 1:
+        namespace = ".".join(parts[:-1])
+        logger.info("Ensuring Iceberg namespace exists: %s", namespace)
+        try:
+            spark.sql(f"CREATE NAMESPACE IF NOT EXISTS {namespace}")
+        except Exception as ns_err:
+            logger.info("Namespace creation note: %s", ns_err)
+
     # DDL for transaction_decisions
     spark.sql(f"""
         CREATE TABLE IF NOT EXISTS {decisions_table} (

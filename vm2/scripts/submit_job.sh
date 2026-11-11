@@ -44,6 +44,6 @@ export PYTHONPATH="${STREAMING_DIR}:${PYTHONPATH}"
     --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" \
     --conf "spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog" \
     --conf "spark.sql.catalog.iceberg.type=hadoop" \
-    --conf "spark.sql.catalog.iceberg.warehouse=${ICEBERG_WAREHOUSE:-hdfs://172.23.222.173:9000/warehouse}" \
+    --conf "spark.sql.catalog.iceberg.warehouse=${ICEBERG_WAREHOUSE:-hdfs://172.23.138.248:9000/warehouse}" \
     --conf "spark.sql.session.timeZone=UTC" \
     app/stream_job.py
