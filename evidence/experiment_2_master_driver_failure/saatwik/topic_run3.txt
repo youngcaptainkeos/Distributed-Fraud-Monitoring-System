@@ -1,0 +1,14 @@
+== transactions-run3 ==
+Topic: transactions-run3	TopicId: mL9djAArTkuiYdoLjJmyuA	PartitionCount: 1	ReplicationFactor: 1	Configs: 
+	Topic: transactions-run3	Partition: 0	Leader: 1	Replicas: 1	Isr: 1	Elr: 	LastKnownElr: 
+transactions-run3:0:2000
+csv_rows                         2000
+topic_messages                   2000
+missing_from_topic               0
+extra_in_topic                   0
+same_content_ignoring_order      True
+same_order_as_file               True
+key_equals_transaction_id        True
+duplicate_ids_kept               True
+all_values_are_strings           True
+RESULT: PASS

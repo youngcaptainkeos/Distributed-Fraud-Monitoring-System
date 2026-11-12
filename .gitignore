@@ -30,3 +30,7 @@ warehouse/
 *.swo
 *~
 .DS_Store
+
+# Local evidence staging and Spark scratch
+evidence_tmp/
+spark-warehouse/
