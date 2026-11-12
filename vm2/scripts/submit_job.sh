@@ -18,11 +18,31 @@ ZT_IP=$(ip -4 addr show ztr2qxeeov 2>/dev/null | grep -oP '(?<=inet\s)\d+(\.\d+)
 DRIVER_HOST=${SPARK_DRIVER_HOST:-${ZT_IP:-172.23.124.232}}
 SPARK_MASTER=${SPARK_MASTER_URL:-spark://${DRIVER_HOST}:7077}
 RUN_ID=${RUN_ID:-run1}
+# Optional run argument overrides the loaded .env and selects isolated outputs.
+# No argument preserves the existing configuration for checkpoint recovery.
+if [ "$#" -gt 1 ]; then
+    echo "Usage: $0 [run-id]" >&2
+    exit 2
+fi
+if [ "$#" -eq 1 ]; then
+    if [[ ! "$1" =~ ^[A-Za-z0-9_]+$ ]]; then
+        echo "Run ID must contain only letters, numbers, and underscores." >&2
+        exit 2
+    fi
+    export RUN_ID="$1"
+    export KAFKA_TOPIC="transactions-${RUN_ID}"
+    export CHECKPOINT_LOCATION="${HDFS_NAMENODE:-hdfs://172.23.138.248:9000}/checkpoints/${RUN_ID}"
+    export DECISIONS_TABLE="${ICEBERG_CATALOG_NAME:-iceberg}.default.transaction_decisions_${RUN_ID}"
+    export ALERTS_TABLE="${ICEBERG_CATALOG_NAME:-iceberg}.default.account_risk_alerts_${RUN_ID}"
+fi
 
 # Package coordinates for Spark 3.3.4 (Scala 2.12)
 KAFKA_PKG="org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.4"
 ICEBERG_PKG="org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.4.1"
 PACKAGES="${KAFKA_PKG},${ICEBERG_PKG}"
+# USE_PACKAGES=0 means the jars are pre-installed in $SPARK_HOME/jars on every machine (nothing is downloaded over the network)
+PKG_FLAGS=()
+if [ "${USE_PACKAGES:-1}" = "1" ]; then PKG_FLAGS=(--packages "${PACKAGES}"); fi
 
 export SPARK_MASTER_URL="${SPARK_MASTER}"
 export PYSPARK_DRIVER_PYTHON="${PYSPARK_DRIVER_PYTHON:-/home/shashank/opt/python3.10/bin/python3.10}"
@@ -48,11 +68,12 @@ zip -q -r /tmp/fraud_engine_modules.zip app config
 "${SPARK_HOME}/bin/spark-submit" \
     --master "${SPARK_MASTER}" \
     --name "FraudDetectionEngine-${RUN_ID}" \
-    --packages "${PACKAGES}" \
+    "${PKG_FLAGS[@]}" \
     --py-files /tmp/fraud_engine_modules.zip \
     --conf "spark.driver.host=${DRIVER_HOST}" \
     --conf "spark.pyspark.driver.python=${PYSPARK_DRIVER_PYTHON}" \
     --conf "spark.pyspark.python=${PYSPARK_PYTHON}" \
+    --conf "spark.sql.shuffle.partitions=${SPARK_SQL_SHUFFLE_PARTITIONS:-4}" \
     --conf "spark.sql.extensions=org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions" \
     --conf "spark.sql.catalog.iceberg=org.apache.iceberg.spark.SparkCatalog" \
     --conf "spark.sql.catalog.iceberg.type=hadoop" \
