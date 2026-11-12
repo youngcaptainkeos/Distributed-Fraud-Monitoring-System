@@ -225,7 +225,7 @@ Generated verification reports are stored in `vm3/verifier/reports/`.
 | Experiment | Fault / Disorder Injected | Verification Expectation |
 | :--- | :--- | :--- |
 | **Baseline** | Clean in-order stream | Output matches ground truth with **100% precision & recall**. |
-| **Exp 1: Worker Kill** | `kill -9` worker process on VM3 or VM4 mid-run | Spark Master redistributes tasks to remaining worker; **zero record loss**, verifier reports PASS. |
+| **Exp 1: Executor Kill** | `kill -9` an executor process mid-run (executed on run 2) | Spark replaces the executor and reschedules tasks; **zero record loss**, verifier reports PASS. |
 | **Exp 2: Master Kill** | Terminate Master & Driver on VM2; restart with **same checkpoint** and **same run ID** | Job resumes from HDFS checkpoint without data loss or duplicate records (enforced via idempotent `MERGE INTO`). |
 | **Exp 3: Delay < 1 min** | Producer delays selected events by $< 60$ seconds | Events fall within the 1-minute watermark buffer; all events processed into proper windows matching ground truth. |
 | **Exp 4: Delay > 1 min** | Producer delays selected events by $> 60$ seconds | Events older than the watermark threshold are dropped; verifier flags dropped events vs ground truth. |
@@ -234,23 +234,29 @@ Generated verification reports are stored in `vm3/verifier/reports/`.
 
 ## 7. Implementation & Validation Status
 
+All five runs were executed on 12 November 2026 on the three-machine cluster and
+checked against the supplied ground truth. Full results, logs, exports and
+screenshots are in [`evidence/`](evidence/README.md).
+
 | Component | Status |
 | :--- | :--- |
 | Input and ground-truth validation | PASS |
 | Independent R1–R5 verification | PASS |
 | Verification report generation | PASS |
-| Streamlit dashboard startup | PASS |
-| Dashboard DEMO mode | PASS |
-| Local HDFS infrastructure | Tested |
-| Spark SQL Thrift Server connectivity | Tested |
-| Populated Iceberg streaming tables | Pending |
-| Distributed Kafka–Spark–Iceberg baseline | Pending |
-| Fault-recovery and disorder experiments | Pending |
-| Full end-to-end distributed integration | Pending |
+| Streamlit dashboard (DEMO and LIVE modes) | PASS |
+| HDFS and Iceberg tables populated by the streaming job | PASS |
+| Distributed Kafka–Spark–Iceberg baseline (run 1) | PASS: 1,990 decisions, 129 alerts, 0 mismatches |
+| Experiment 1: executor failure (run 2) | PASS |
+| Experiment 2: master and driver failure (run 3) | PASS (manual restart and resubmit, same checkpoint) |
+| Experiment 3: late data under 1 minute (run 4) | PASS |
+| Experiment 4: late data beyond the watermark (run 5) | Expected difference: 7 late rows (0.35 %) absent from decisions, alerts unchanged |
 
-The independent verifier validates the supplied transaction dataset against its ground-truth results. Dashboard DEMO mode uses the supplied ground-truth CSV files.
+Run 6, the first end-to-end attempt, exposed a timezone defect (alert windows
+5 h 30 min early). It was fixed in `vm2/app/stream_job.py` and is kept as
+evidence of the verifier catching a real defect.
 
-Successful verifier and DEMO dashboard runs do not, by themselves, establish successful end-to-end distributed stream processing.
+For concepts, implementation detail and viva preparation see
+[`docs/STUDY_GUIDE.md`](docs/STUDY_GUIDE.md).
 
 ### Deployment Note
 

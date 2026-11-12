@@ -1,5 +1,11 @@
 # Evaluation requirements and remaining demo work
 
+> **Status update, 13 November 2026.** This working draft was written before the runs.
+> All five runs have since been completed and verified; the statements below about
+> pending work, run 6 and report templates are historical. Current results are in
+> [`../../evidence/README.md`](../../evidence/README.md).
+
+
 Source: the evaluator's message supplied in this chat and the
 [official project brief](https://big-data-2026-supersite.super.site/projects-1/distributed-fraud-monitoring-system).
 Assessment date: 12 November 2026. This records inspected source and saved
