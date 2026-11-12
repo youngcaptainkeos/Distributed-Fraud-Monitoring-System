@@ -1,3 +1,6 @@
+import json
+from datetime import timedelta
+
 import streamlit as st
 import pandas as pd
 import plotly.express as px
@@ -73,32 +76,37 @@ hr {
 """, unsafe_allow_html=True)
 
 # ---------- DATA ----------
-@st.cache_data
-def load_data():
-    d = pd.read_csv(DATA / "ground_truth_transaction_decisions.csv")
-    a = pd.read_csv(DATA / "ground_truth_account_risk_alerts.csv")
+RULE_FLAGS = [
+    "r1_triggered", "r2_triggered", "r3_triggered",
+    "r4_triggered", "r5_block_triggered"
+]
 
-    d["amount"] = pd.to_numeric(d["amount"], errors="coerce")
+
+def _clean_account(s):
+    # account ids may arrive as int, float (NaN present) or str
+    return s.astype("string").str.replace(r"\.0$", "", regex=True)
+
+
+def normalize(d, a):
+    """Same types for DEMO (CSV) and LIVE (Iceberg via Thrift)."""
+    d = d.copy()
+    a = a.copy()
+
+    for col in ("source_account", "destination_account"):
+        if col in d.columns:
+            d[col] = _clean_account(d[col])
+        if col in a.columns:
+            a[col] = _clean_account(a[col])
+
+    for col in ("amount", "r5_risk_score"):
+        if col in d.columns:
+            d[col] = pd.to_numeric(d[col], errors="coerce")
+
     d["event_timestamp"] = pd.to_datetime(
         d["event_timestamp"], utc=True, errors="coerce"
     )
-    return d, a
 
-
-@st.cache_data(ttl=10)
-def load_live_data(run_number):
-    from iceberg_source import load_iceberg_run
-
-    d, a = load_iceberg_run(run_number)
-    d["amount"] = pd.to_numeric(d["amount"], errors="coerce")
-    d["event_timestamp"] = pd.to_datetime(
-        d["event_timestamp"], utc=True, errors="coerce"
-    )
-
-    for col in [
-        "r1_triggered", "r2_triggered", "r3_triggered",
-        "r4_triggered", "r5_block_triggered"
-    ]:
+    for col in RULE_FLAGS:
         if col in d.columns:
             d[col] = (
                 d[col].astype(str).str.lower().map({
@@ -107,7 +115,26 @@ def load_live_data(run_number):
                 }).fillna(False).astype(bool)
             )
 
+    for col in ("window_start", "window_end"):
+        if col in a.columns:
+            a[col] = pd.to_datetime(a[col], utc=True, errors="coerce")
+
     return d, a
+
+
+@st.cache_data
+def load_data():
+    d = pd.read_csv(DATA / "ground_truth_transaction_decisions.csv")
+    a = pd.read_csv(DATA / "ground_truth_account_risk_alerts.csv")
+    return normalize(d, a)
+
+
+@st.cache_data(ttl=10)
+def load_live_data(run_number):
+    from iceberg_source import load_iceberg_run
+
+    d, a = load_iceberg_run(run_number)
+    return normalize(d, a)
 
 # ---------- DATA SOURCE ----------
 data_mode = st.sidebar.selectbox(
@@ -149,8 +176,30 @@ selected_decision = st.sidebar.selectbox(
     "Transaction decision", decision_options
 )
 
-rule_options = ["ALL", "R1", "R2", "R3", "R4"]
+rule_options = ["ALL", "R1", "R2", "R3", "R4", "R5"]
 selected_rule = st.sidebar.selectbox("Fraud rule", rule_options)
+
+account_query = st.sidebar.text_input(
+    "Account (source or destination)",
+    help="Digits of an account number; matches source or destination."
+).strip()
+
+_ts_valid = df["event_timestamp"].dropna()
+time_range = None
+if not _ts_valid.empty:
+    t_min = _ts_valid.min().tz_localize(None).to_pydatetime()
+    t_max = _ts_valid.max().tz_localize(None).to_pydatetime()
+    if t_min < t_max:
+        time_range = st.sidebar.slider(
+            "Time range (event time, UTC)",
+            min_value=t_min,
+            max_value=t_max,
+            value=(t_min, t_max),
+            step=timedelta(minutes=1),
+            format="MM-DD HH:mm"
+        )
+        if time_range == (t_min, t_max):
+            time_range = None  # full range selected: no time filter
 
 st.sidebar.divider()
 st.sidebar.markdown("### Data Source")
@@ -189,13 +238,41 @@ st.divider()
 
 # ---------- FILTER DATA ----------
 filtered = df.copy()
+alerts_f = alerts.copy()
 
 if selected_decision != "ALL":
     filtered = filtered[filtered["decision"] == selected_decision]
 
 if selected_rule != "ALL":
-    col = f"{selected_rule.lower()}_triggered"
-    filtered = filtered[filtered[col].fillna(False).astype(bool)]
+    flag = (
+        "r5_block_triggered" if selected_rule == "R5"
+        else f"{selected_rule.lower()}_triggered"
+    )
+    filtered = filtered[filtered[flag].fillna(False).astype(bool)]
+    if not alerts_f.empty and "rule_id" in alerts_f.columns:
+        alerts_f = alerts_f[alerts_f["rule_id"] == selected_rule]
+
+if account_query:
+    acct_mask = (
+        filtered["source_account"].astype(str).str.contains(account_query, na=False)
+        | filtered["destination_account"].astype(str).str.contains(account_query, na=False)
+    )
+    filtered = filtered[acct_mask]
+    if not alerts_f.empty:
+        alerts_f = alerts_f[
+            alerts_f["source_account"].astype(str).str.contains(account_query, na=False)
+            | alerts_f["destination_account"].astype(str).str.contains(account_query, na=False)
+        ]
+
+if time_range is not None:
+    t0, t1 = pd.Timestamp(time_range[0]), pd.Timestamp(time_range[1])
+    ts = filtered["event_timestamp"].dt.tz_localize(None)
+    filtered = filtered[(ts >= t0) & (ts <= t1)]
+    if not alerts_f.empty and "window_start" in alerts_f.columns:
+        ws = alerts_f["window_start"].dt.tz_localize(None)
+        we = alerts_f["window_end"].dt.tz_localize(None)
+        # keep alerts whose detection window overlaps the selected range
+        alerts_f = alerts_f[(we.isna() | (we >= t0)) & (ws.isna() | (ws <= t1))]
 
 # ---------- KPI CARDS ----------
 st.markdown("### System Overview")
@@ -217,10 +294,10 @@ st.markdown("### Fraud Rule Activity")
 rule_cols = st.columns(5)
 for i, col in enumerate(rule_cols, start=1):
     if i <= 4:
-        count = int(df[f"r{i}_triggered"].fillna(False).sum())
+        count = int(filtered[f"r{i}_triggered"].fillna(False).sum())
         label = f"R{i} Triggers"
     else:
-        count = int(df["r5_block_triggered"].fillna(False).sum())
+        count = int(filtered["r5_block_triggered"].fillna(False).sum())
         label = "R5 Blocks"
 
     col.metric(label, f"{count:,}")
@@ -259,7 +336,7 @@ with right:
     rule_data = pd.DataFrame({
         "Rule": ["R1", "R2", "R3", "R4"],
         "Triggers": [
-            int(df[f"r{i}_triggered"].fillna(False).sum())
+            int(filtered[f"r{i}_triggered"].fillna(False).sum())
             for i in range(1, 5)
         ]
     })
@@ -286,12 +363,12 @@ with right:
 
 # ---------- TIMELINE ----------
 st.divider()
-st.markdown("### Transaction Activity Timeline")
+st.markdown("### Transaction Volume per Minute")
 
 timeline = filtered.dropna(subset=["event_timestamp"]).copy()
 
 if not timeline.empty:
-    timeline["Time"] = timeline["event_timestamp"].dt.floor("15min")
+    timeline["Time"] = timeline["event_timestamp"].dt.floor("1min")
     timeline_data = (
         timeline.groupby(["Time", "decision"])
         .size()
@@ -315,8 +392,8 @@ if not timeline.empty:
         paper_bgcolor="rgba(0,0,0,0)",
         plot_bgcolor="rgba(0,0,0,0)",
         height=330,
-        xaxis_title="Event Time",
-        yaxis_title="Transaction Count"
+        xaxis_title="Event Time (per minute)",
+        yaxis_title="Transactions per minute"
     )
     st.plotly_chart(fig, use_container_width=True)
 
@@ -366,19 +443,19 @@ st.dataframe(
 st.divider()
 st.markdown("### 🚨 Fraud Alerts")
 
-if not alerts.empty:
+if not alerts_f.empty:
     alert_left, alert_right = st.columns([1, 2])
 
     with alert_left:
         st.markdown("#### Alert Summary")
-        counts = alerts["rule_id"].value_counts().sort_index()
+        counts = alerts_f["rule_id"].value_counts().sort_index()
 
         for rule, count in counts.items():
             st.metric(f"{rule} Alerts", int(count))
 
     with alert_right:
         st.markdown("#### Alert Distribution")
-        alert_chart = alerts["rule_id"].value_counts().reset_index()
+        alert_chart = alerts_f["rule_id"].value_counts().reset_index()
         alert_chart.columns = ["Rule", "Alerts"]
 
         fig = px.bar(
@@ -402,7 +479,7 @@ if not alerts.empty:
 
     alert_search = st.text_input("Search alert ID or source account")
 
-    shown_alerts = alerts.copy()
+    shown_alerts = alerts_f.copy()
     if alert_search:
         mask = (
             shown_alerts["alert_id"].astype(str).str.contains(
@@ -421,7 +498,91 @@ if not alerts.empty:
         height=350
     )
 else:
-    st.success("No fraud alerts found.")
+    st.success("No fraud alerts for the current filters.")
+
+# ---------- INVESTIGATION ----------
+st.divider()
+st.markdown("### 🔎 Investigation")
+st.caption(
+    "Pick an alert or a transaction to see why it was flagged, the "
+    "transaction involved, and the account's last 20 transactions."
+)
+
+
+def parse_id_list(value):
+    if value is None or (isinstance(value, float) and pd.isna(value)):
+        return []
+    try:
+        out = json.loads(value) if isinstance(value, str) else list(value)
+        return [str(x) for x in out]
+    except Exception:
+        return []
+
+
+def account_history(account):
+    if not account or account == "<NA>":
+        return pd.DataFrame()
+    hist = df[(df["source_account"] == account) | (df["destination_account"] == account)].copy()
+    hist["role"] = hist["source_account"].map(lambda x: "source" if x == account else "destination")
+    cols = [c for c in [
+        "transaction_id", "role", "event_timestamp", "amount", "currency",
+        "source_account", "destination_account", "decision"
+    ] if c in hist.columns]
+    return hist.sort_values("event_timestamp", ascending=False).head(20)[cols]
+
+
+def show_txn_rows(title, ids):
+    st.markdown(title)
+    rows = df[df["transaction_id"].isin(ids)]
+    if rows.empty:
+        st.caption("No matching transactions in this run.")
+    else:
+        st.dataframe(rows, use_container_width=True, hide_index=True)
+
+
+inv_mode = st.radio("Investigate by", ["Alert", "Transaction ID"], horizontal=True)
+
+if inv_mode == "Alert":
+    options = alerts_f["alert_id"].astype(str).tolist() if not alerts_f.empty else []
+    if not options:
+        st.info("No alerts available for the current filters.")
+    else:
+        chosen = st.selectbox("Alert", options)
+        row = alerts_f[alerts_f["alert_id"].astype(str) == chosen].iloc[0]
+        st.markdown("#### Why it was flagged")
+        st.info(str(row.get("explanation", "(no explanation stored)")))
+        st.dataframe(
+            row.to_frame("value").astype(str), use_container_width=True
+        )
+        show_txn_rows(
+            "#### Trigger transaction", [str(row.get("trigger_transaction_id"))]
+        )
+        support = parse_id_list(row.get("supporting_transaction_ids"))
+        show_txn_rows(f"#### Supporting transactions ({len(support)})", support)
+        acct = str(row.get("source_account"))
+        st.markdown(f"#### Last 20 transactions for account {acct}")
+        st.dataframe(account_history(acct), use_container_width=True, hide_index=True)
+else:
+    txn_id = st.text_input("Transaction ID (for example TXN0001596)").strip()
+    if txn_id:
+        match = df[df["transaction_id"].astype(str) == txn_id]
+        if match.empty:
+            st.warning(f"Transaction {txn_id} not found in this run.")
+        else:
+            t = match.iloc[0]
+            st.markdown("#### Transaction")
+            st.dataframe(match, use_container_width=True, hide_index=True)
+            related = parse_id_list(t.get("related_alert_ids"))
+            st.markdown(f"#### Why it was flagged ({len(related)} related alert(s))")
+            if not related:
+                st.success(f"Decision {t.get('decision')}: no alert references this transaction.")
+            else:
+                rel = alerts[alerts["alert_id"].astype(str).isin(related)]
+                for _, r in rel.iterrows():
+                    st.info(f"{r.get('alert_id')}: {r.get('explanation')}")
+            acct = str(t.get("source_account"))
+            st.markdown(f"#### Last 20 transactions for account {acct}")
+            st.dataframe(account_history(acct), use_container_width=True, hide_index=True)
 
 # ---------- FOOTER ----------
 st.divider()

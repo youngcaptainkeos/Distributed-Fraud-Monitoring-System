@@ -26,7 +26,7 @@ def query_sql(sql):
             "-n", USERNAME,
             "--silent=true",
             "--showHeader=true",
-            "--outputformat=csv2",
+            "--outputformat=tsv2",
             "-e", sql.rstrip().rstrip(";") + ";"
         ],
         capture_output=True,
@@ -37,7 +37,7 @@ def query_sql(sql):
     if result.returncode != 0:
         raise RuntimeError(result.stderr or result.stdout)
 
-    return pd.read_csv(io.StringIO(result.stdout), sep=",", skipinitialspace=True)
+    return pd.read_csv(io.StringIO(result.stdout), sep="\t", quoting=3, dtype=str)
 
 
 def load_iceberg_run(run_number):

@@ -1,0 +1,26 @@
+== HDFS /checkpoints/run3 (commits) ==
+2026-11-12 17:36:25,079 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Found 19 items
+-rw-r--r--   1 shashank supergroup         29 2026-11-12 15:33 /checkpoints/run3/commits/0
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:40 /checkpoints/run3/commits/1
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:40 /checkpoints/run3/commits/2
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:40 /checkpoints/run3/commits/3
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:41 /checkpoints/run3/commits/4
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:41 /checkpoints/run3/commits/5
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:41 /checkpoints/run3/commits/6
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:42 /checkpoints/run3/commits/7
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:42 /checkpoints/run3/commits/8
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:42 /checkpoints/run3/commits/9
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:43 /checkpoints/run3/commits/10
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:47 /checkpoints/run3/commits/11
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:47 /checkpoints/run3/commits/12
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:48 /checkpoints/run3/commits/13
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:49 /checkpoints/run3/commits/14
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:49 /checkpoints/run3/commits/15
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:50 /checkpoints/run3/commits/16
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:50 /checkpoints/run3/commits/17
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:51 /checkpoints/run3/commits/18
+== HDFS warehouse tables ==
+2026-11-12 17:36:25,612 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+drwxrwxrwx   - shashank supergroup          0 2026-11-12 15:47 /warehouse/default/account_risk_alerts_run3
+drwxrwxrwx   - shashank supergroup          0 2026-11-12 15:40 /warehouse/default/transaction_decisions_run3

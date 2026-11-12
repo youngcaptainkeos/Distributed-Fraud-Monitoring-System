@@ -1,0 +1,87 @@
+{
+    "input_validation": {
+        "status": "PASSED",
+        "total_input_rows": 2000,
+        "unique_transactions": 1990,
+        "duplicate_rows": 10,
+        "duplicate_transaction_ids": [
+            "TXN0000606",
+            "TXN0000791",
+            "TXN0000968",
+            "TXN0000991",
+            "TXN0001050",
+            "TXN0001078",
+            "TXN0001775",
+            "TXN0001817",
+            "TXN0001858",
+            "TXN0001987"
+        ],
+        "duplicate_conflicts": [],
+        "invalid_amounts": [],
+        "invalid_timestamps": [],
+        "currency_distribution": {
+            "INR": 1986,
+            "USD": 2,
+            "": 2
+        },
+        "errors": [],
+        "warnings": []
+    },
+    "ground_truth_validation": {
+        "status": "PASSED",
+        "decision_count": 1990,
+        "alert_count": 129,
+        "decision_distribution": {
+            "APPROVE": 1659,
+            "REVIEW": 231,
+            "BLOCK": 100
+        },
+        "rule_trigger_distribution": {
+            "r1": 194,
+            "r2": 203,
+            "r3": 66,
+            "r4": 98
+        },
+        "alert_rule_distribution": {
+            "R2": 90,
+            "R4": 25,
+            "R3": 14
+        },
+        "alert_scope_distribution": {
+            "WINDOW": 104,
+            "PATTERN": 25
+        },
+        "missing_decisions": [],
+        "extra_decisions": [],
+        "duplicate_decisions": [],
+        "r5_consistency_errors": [],
+        "missing_alert_supporting_ids": [],
+        "errors": []
+    },
+    "decision_comparison": {
+        "expected_count": 1990,
+        "actual_count": 1983,
+        "missing_count": 7,
+        "extra_count": 0,
+        "missing_ids": [
+            "TXN0000125",
+            "TXN0000291",
+            "TXN0000369",
+            "TXN0000395",
+            "TXN0000684",
+            "TXN0001023",
+            "TXN0001953"
+        ],
+        "extra_ids": [],
+        "mismatch_count": 0,
+        "mismatches": [],
+        "status": "FAILED"
+    },
+    "alert_comparison": {
+        "expected_count": 129,
+        "actual_count": 129,
+        "missing_alerts": 0,
+        "extra_alerts": 0,
+        "status": "PASSED"
+    }
+}
