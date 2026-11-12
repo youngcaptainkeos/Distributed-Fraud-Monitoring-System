@@ -1,0 +1,28 @@
+
+========================================
+ DISTRIBUTED FRAUD MONITORING VERIFIER
+========================================
+
+[1/3] Validating transaction input...
+Input validation: PASSED
+Raw rows: 2000
+Unique transactions: 1990
+Duplicate rows: 10
+
+[2/3] Validating supplied ground truth...
+Ground-truth validation: PASSED
+Expected decisions: 1990
+Expected alerts: 129
+
+[3/3] Comparing actual transaction decisions...
+Decision comparison: PASSED
+Mismatches: 0
+
+Comparing actual account-risk alerts...
+Alert comparison: FAILED
+
+Report saved to: /home/pes1ug24cs481/team-repo/vm3/verifier/reports/verification_report.json
+
+========================================
+ VERIFICATION FINISHED
+========================================

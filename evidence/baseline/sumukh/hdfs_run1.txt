@@ -1,0 +1,15 @@
+== HDFS /checkpoints/run1 (commits) ==
+2026-11-12 17:36:22,861 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Found 8 items
+-rw-r--r--   1 shashank supergroup         29 2026-11-12 14:50 /checkpoints/run1/commits/0
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:57 /checkpoints/run1/commits/1
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:57 /checkpoints/run1/commits/2
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:57 /checkpoints/run1/commits/3
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:58 /checkpoints/run1/commits/4
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:59 /checkpoints/run1/commits/5
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:59 /checkpoints/run1/commits/6
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 14:59 /checkpoints/run1/commits/7
+== HDFS warehouse tables ==
+2026-11-12 17:36:23,481 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+drwxrwxrwx   - shashank supergroup          0 2026-11-12 14:57 /warehouse/default/account_risk_alerts_run1
+drwxrwxrwx   - shashank supergroup          0 2026-11-12 14:57 /warehouse/default/transaction_decisions_run1

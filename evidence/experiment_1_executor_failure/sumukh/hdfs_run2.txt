@@ -1,0 +1,34 @@
+== HDFS /checkpoints/run2 (commits) ==
+2026-11-12 17:36:24,033 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+Found 27 items
+-rw-r--r--   1 shashank supergroup         29 2026-11-12 15:09 /checkpoints/run2/commits/0
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:11 /checkpoints/run2/commits/1
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:11 /checkpoints/run2/commits/2
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:12 /checkpoints/run2/commits/3
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:12 /checkpoints/run2/commits/4
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:12 /checkpoints/run2/commits/5
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:12 /checkpoints/run2/commits/6
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:13 /checkpoints/run2/commits/7
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:13 /checkpoints/run2/commits/8
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:13 /checkpoints/run2/commits/9
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:13 /checkpoints/run2/commits/10
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:14 /checkpoints/run2/commits/11
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:14 /checkpoints/run2/commits/12
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:15 /checkpoints/run2/commits/13
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:15 /checkpoints/run2/commits/14
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:16 /checkpoints/run2/commits/15
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:16 /checkpoints/run2/commits/16
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:17 /checkpoints/run2/commits/17
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:17 /checkpoints/run2/commits/18
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:18 /checkpoints/run2/commits/19
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:19 /checkpoints/run2/commits/20
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:19 /checkpoints/run2/commits/21
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:20 /checkpoints/run2/commits/22
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:21 /checkpoints/run2/commits/23
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:21 /checkpoints/run2/commits/24
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:22 /checkpoints/run2/commits/25
+-rw-r--r--   1 shashank supergroup         41 2026-11-12 15:22 /checkpoints/run2/commits/26
+== HDFS warehouse tables ==
+2026-11-12 17:36:24,560 WARN util.NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+drwxrwxrwx   - shashank supergroup          0 2026-11-12 15:14 /warehouse/default/account_risk_alerts_run2
+drwxrwxrwx   - shashank supergroup          0 2026-11-12 15:11 /warehouse/default/transaction_decisions_run2
