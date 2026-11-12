@@ -1,0 +1,160 @@
+Loading environment variables from config/.env
+==========================================================
+ Submitting Fraud Detection Engine (VM2 Driver)
+ Run ID: run3
+ Spark Master: spark://<ZT_IP>:7077
+ Driver Host (ZeroTier): <ZT_IP>
+ Driver Python: /home/shashank/opt/python3.10/bin/python3.10
+ Worker Python: /usr/bin/python3.10
+ Packages: org.apache.spark:spark-sql-kafka-0-10_2.12:3.3.4,org.apache.iceberg:iceberg-spark-runtime-3.3_2.12:1.4.1
+==========================================================
+SLF4J: Class path contains multiple SLF4J bindings.
+SLF4J: Found binding in [jar:file:/home/shashank/opt/spark/jars/log4j-slf4j-impl-2.17.2.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: Found binding in [jar:file:/opt/hadoop/share/hadoop/common/lib/slf4j-reload4j-1.7.36.jar!/org/slf4j/impl/StaticLoggerBinder.class]
+SLF4J: See http://www.slf4j.org/codes.html#multiple_bindings for an explanation.
+SLF4J: Actual binding is of type [org.apache.logging.slf4j.Log4jLoggerFactory]
+26/11/12 21:16:26 WARN Utils: Your hostname, shashlaptop resolves to a loopback address: 127.0.1.1; using 192.168.1.12 instead (on interface wlo1)
+26/11/12 21:16:26 WARN Utils: Set SPARK_LOCAL_IP if you need to bind to another address
+26/11/12 21:16:26 WARN NativeCodeLoader: Unable to load native-hadoop library for your platform... using builtin-java classes where applicable
+2026-11-12 21:16:27,371 [INFO] FraudMonitoringJob: === Starting Fraud Monitoring Streaming Pipeline (Run: run3) ===
+2026-11-12 21:16:27,371 [INFO] FraudMonitoringJob: Kafka Bootstrap: <ZT_IP>:9092 | Topic: transactions-run3
+2026-11-12 21:16:27,371 [INFO] FraudMonitoringJob: HDFS Checkpoint: hdfs://<ZT_IP>:9000/checkpoints/run3
+2026-11-12 21:16:27,371 [INFO] FraudMonitoringJob: Iceberg Tables: iceberg.default.transaction_decisions_run3, iceberg.default.account_risk_alerts_run3
+2026-11-12 21:16:27,371 [INFO] FraudMonitoringJob: Initializing SparkSession (configured master: 'spark://<ZT_IP>:7077')
+26/11/12 21:16:27 INFO SparkContext: Running Spark version 3.3.4
+26/11/12 21:16:27 INFO ResourceUtils: ==============================================================
+26/11/12 21:16:27 INFO ResourceUtils: No custom resources configured for spark.driver.
+26/11/12 21:16:27 INFO ResourceUtils: ==============================================================
+26/11/12 21:16:27 INFO SparkContext: Submitted application: FraudDetectionEngine-run3
+26/11/12 21:16:27 INFO ResourceProfile: Default ResourceProfile created, executor resources: Map(cores -> name: cores, amount: 1, script: , vendor: , memory -> name: memory, amount: 512, script: , vendor: , offHeap -> name: offHeap, amount: 0, script: , vendor: ), task resources: Map(cpus -> name: cpus, amount: 1.0)
+26/11/12 21:16:27 INFO ResourceProfile: Limiting resource is cpu
+26/11/12 21:16:27 INFO ResourceProfileManager: Added ResourceProfile id: 0
+26/11/12 21:16:27 INFO SecurityManager: Changing view acls to: shashank
+26/11/12 21:16:27 INFO SecurityManager: Changing modify acls to: shashank
+26/11/12 21:16:27 INFO SecurityManager: Changing view acls groups to: 
+26/11/12 21:16:27 INFO SecurityManager: Changing modify acls groups to: 
+26/11/12 21:16:27 INFO SecurityManager: SecurityManager: authentication disabled; ui acls disabled; users  with view permissions: Set(shashank); groups with view permissions: Set(); users  with modify permissions: Set(shashank); groups with modify permissions: Set()
+26/11/12 21:16:27 INFO Utils: Successfully started service 'sparkDriver' on port 34717.
+26/11/12 21:16:27 INFO SparkEnv: Registering MapOutputTracker
+26/11/12 21:16:27 INFO SparkEnv: Registering BlockManagerMaster
+26/11/12 21:16:27 INFO BlockManagerMasterEndpoint: Using org.apache.spark.storage.DefaultTopologyMapper for getting topology information
+26/11/12 21:16:27 INFO BlockManagerMasterEndpoint: BlockManagerMasterEndpoint up
+26/11/12 21:16:27 INFO SparkEnv: Registering BlockManagerMasterHeartbeat
+26/11/12 21:16:27 INFO DiskBlockManager: Created local directory at /tmp/blockmgr-a20a09bb-3575-435c-aa76-6212b913ca7a
+26/11/12 21:16:27 INFO MemoryStore: MemoryStore started with capacity 434.4 MiB
+26/11/12 21:16:27 INFO SparkEnv: Registering OutputCommitCoordinator
+26/11/12 21:16:27 INFO Utils: Successfully started service 'SparkUI' on port 4040.
+26/11/12 21:16:27 INFO SparkContext: Added file file:///tmp/fraud_engine_modules.zip at spark://<ZT_IP>:34717/files/fraud_engine_modules.zip with timestamp 1794498387414
+26/11/12 21:16:27 INFO Utils: Copying /tmp/fraud_engine_modules.zip to /tmp/spark-4cd143ee-06eb-47f5-92be-893e82067d75/userFiles-a8ca701e-0cc1-4302-93e2-d984eb08fd5d/fraud_engine_modules.zip
+26/11/12 21:16:28 INFO StandaloneAppClient$ClientEndpoint: Connecting to master spark://<ZT_IP>:7077...
+26/11/12 21:16:28 INFO TransportClientFactory: Successfully created connection to /<ZT_IP>:7077 after 19 ms (0 ms spent in bootstraps)
+26/11/12 21:16:28 INFO StandaloneSchedulerBackend: Connected to Spark cluster with app ID app-20261112211628-0000
+26/11/12 21:16:28 INFO Utils: Successfully started service 'org.apache.spark.network.netty.NettyBlockTransferService' on port 42529.
+26/11/12 21:16:28 INFO NettyBlockTransferService: Server created on <ZT_IP>:42529
+26/11/12 21:16:28 INFO BlockManager: Using org.apache.spark.storage.RandomBlockReplicationPolicy for block replication policy
+26/11/12 21:16:28 INFO BlockManagerMaster: Registering BlockManager BlockManagerId(driver, <ZT_IP>, 42529, None)
+26/11/12 21:16:28 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261112211628-0000/0 on worker-20261112134115-<ZT_IP>-38277 (<ZT_IP>:38277) with 2 core(s)
+26/11/12 21:16:28 INFO StandaloneSchedulerBackend: Granted executor ID app-20261112211628-0000/0 on hostPort <ZT_IP>:38277 with 2 core(s), 512.0 MiB RAM
+26/11/12 21:16:28 INFO StandaloneAppClient$ClientEndpoint: Executor added: app-20261112211628-0000/1 on worker-20261112134113-<ZT_IP>-33313 (<ZT_IP>:33313) with 2 core(s)
+26/11/12 21:16:28 INFO StandaloneSchedulerBackend: Granted executor ID app-20261112211628-0000/1 on hostPort <ZT_IP>:33313 with 2 core(s), 512.0 MiB RAM
+26/11/12 21:16:28 INFO BlockManagerMasterEndpoint: Registering block manager <ZT_IP>:42529 with 434.4 MiB RAM, BlockManagerId(driver, <ZT_IP>, 42529, None)
+26/11/12 21:16:28 INFO BlockManagerMaster: Registered BlockManager BlockManagerId(driver, <ZT_IP>, 42529, None)
+26/11/12 21:16:28 INFO BlockManager: Initialized BlockManager: BlockManagerId(driver, <ZT_IP>, 42529, None)
+26/11/12 21:16:28 INFO StandaloneSchedulerBackend: SchedulerBackend is ready for scheduling beginning after reached minRegisteredResourcesRatio: 0.0
+26/11/12 21:16:28 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261112211628-0000/1 is now RUNNING
+26/11/12 21:16:28 INFO StandaloneAppClient$ClientEndpoint: Executor updated: app-20261112211628-0000/0 is now RUNNING
+2026-11-12 21:16:28,518 [INFO] FraudDetectionWriter: Initializing Iceberg tables: iceberg.default.transaction_decisions_run3 and iceberg.default.account_risk_alerts_run3
+2026-11-12 21:16:28,518 [INFO] FraudDetectionWriter: Ensuring Iceberg namespace exists: iceberg.default
+2026-11-12 21:16:32,324 [INFO] FraudDetectionWriter: Iceberg tables verified/initialized successfully.
+2026-11-12 21:16:32,324 [INFO] FraudMonitoringJob: Subscribing to Kafka topic: transactions-run3
+2026-11-12 21:16:32,770 [INFO] py4j.java_gateway: Callback Server Starting
+2026-11-12 21:16:32,770 [INFO] py4j.java_gateway: Socket listening on ('127.0.0.1', 40609)
+26/11/12 21:16:32 WARN ResolveWriteToStream: spark.sql.adaptive.enabled is not supported in streaming DataFrames/Datasets and will be disabled.
+2026-11-12 21:16:33,354 [INFO] FraudMonitoringJob: Streaming query started. Awaiting termination...
+2026-11-12 21:16:35,060 [INFO] py4j.clientserver: Python Server ready to receive messages
+2026-11-12 21:16:35,061 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:16:41,362 [INFO] FraudMonitoringJob: [Batch 11] Processing micro-batch with 66 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:16:49,931 [INFO] FraudDetectionWriter: [Batch 11] Writing 592 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:17:03,548 [INFO] FraudDetectionWriter: [Batch 11] Writing 5 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:17:11,060 [INFO] FraudMonitoringJob: [Batch 11] Successfully updated 592 decisions and 5 alerts in Iceberg.
+26/11/12 21:17:11 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 38386 milliseconds
+2026-11-12 21:17:19,279 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:17:23,283 [INFO] FraudMonitoringJob: [Batch 12] Processing micro-batch with 828 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:17:33,701 [INFO] FraudDetectionWriter: [Batch 12] Writing 1420 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:17:45,227 [INFO] FraudDetectionWriter: [Batch 12] Writing 83 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:17:55,157 [INFO] FraudMonitoringJob: [Batch 12] Successfully updated 1420 decisions and 83 alerts in Iceberg.
+26/11/12 21:17:55 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 44011 milliseconds
+2026-11-12 21:17:56,748 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:17:59,720 [INFO] FraudMonitoringJob: [Batch 13] Processing micro-batch with 124 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:18:10,529 [INFO] FraudDetectionWriter: [Batch 13] Writing 1544 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:18:21,259 [INFO] FraudDetectionWriter: [Batch 13] Writing 101 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:18:32,640 [INFO] FraudMonitoringJob: [Batch 13] Successfully updated 1544 decisions and 101 alerts in Iceberg.
+26/11/12 21:18:33 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 37582 milliseconds
+2026-11-12 21:18:34,525 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:18:38,685 [INFO] FraudMonitoringJob: [Batch 14] Processing micro-batch with 124 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:18:49,779 [INFO] FraudDetectionWriter: [Batch 14] Writing 1668 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:18:59,657 [INFO] FraudDetectionWriter: [Batch 14] Writing 125 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:19:09,234 [INFO] FraudMonitoringJob: [Batch 14] Successfully updated 1668 decisions and 125 alerts in Iceberg.
+26/11/12 21:19:10 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 36702 milliseconds
+2026-11-12 21:19:11,099 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:19:13,498 [INFO] FraudMonitoringJob: [Batch 15] Processing micro-batch with 121 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:19:25,479 [INFO] FraudDetectionWriter: [Batch 15] Writing 1789 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:19:36,550 [INFO] FraudDetectionWriter: [Batch 15] Writing 129 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:19:46,461 [INFO] FraudMonitoringJob: [Batch 15] Successfully updated 1789 decisions and 129 alerts in Iceberg.
+26/11/12 21:19:47 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 36943 milliseconds
+2026-11-12 21:19:47,713 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:19:50,411 [INFO] FraudMonitoringJob: [Batch 16] Processing micro-batch with 120 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:20:01,801 [INFO] FraudDetectionWriter: [Batch 16] Writing 1909 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:20:13,963 [INFO] FraudDetectionWriter: [Batch 16] Writing 129 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:20:21,240 [INFO] FraudMonitoringJob: [Batch 16] Successfully updated 1909 decisions and 129 alerts in Iceberg.
+26/11/12 21:20:21 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 34628 milliseconds
+2026-11-12 21:20:22,293 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:20:25,744 [INFO] FraudMonitoringJob: [Batch 17] Processing micro-batch with 81 records.
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:248: FutureWarning: Passing unit-less datetime64 dtype to .astype is deprecated and will raise in a future version. Pass 'datetime64[ns]' instead
+  series = series.astype(t, copy=False)
+/home/shashank/opt/spark/python/lib/pyspark.zip/pyspark/sql/pandas/conversion.py:486: FutureWarning: iteritems is deprecated and will be removed in a future version. Use .items instead.
+  for column, series in pdf.iteritems():
+2026-11-12 21:20:38,564 [INFO] FraudDetectionWriter: [Batch 17] Writing 1990 decisions to iceberg.default.transaction_decisions_run3
+2026-11-12 21:20:47,756 [INFO] FraudDetectionWriter: [Batch 17] Writing 129 alerts to iceberg.default.account_risk_alerts_run3
+2026-11-12 21:20:56,456 [INFO] FraudMonitoringJob: [Batch 17] Successfully updated 1990 decisions and 129 alerts in Iceberg.
+26/11/12 21:20:56 WARN ProcessingTimeExecutor: Current batch is falling behind. The trigger interval is 10000 milliseconds, but spent 35350 milliseconds
+2026-11-12 21:20:57,789 [INFO] py4j.clientserver: Received command c on object id p0
+2026-11-12 21:21:00,100 [INFO] FraudMonitoringJob: [Batch 18] Empty batch received; skipping.
