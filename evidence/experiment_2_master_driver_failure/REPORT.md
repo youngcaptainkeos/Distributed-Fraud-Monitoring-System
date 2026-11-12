@@ -61,7 +61,7 @@ Stop the Spark master and driver mid-batch. After restart, show the job resumes 
 ## 9. Result
 - PASS
 - Explanation: Checkpointing and idempotent writes gave exactly-once results across a full restart.
-- Issues encountered: Recovery is manual; there is no standby master or automatic driver restart. The dashboard LIVE parse bug (csv2 vs tsv2) was fixed during the outage; it is not part of the result. The log shows the driver stopped before the master (last line 21:13:16); how the driver was stopped should be confirmed by Shashank.
+- Issues encountered: Recovery is manual; there is no standby master or automatic driver restart. The dashboard LIVE parse bug (csv2 vs tsv2) was fixed during the outage; it is not part of the result. The driver log ends at 21:13:16 IST, 24 s before `stop_master.sh` (21:13:40 IST); the exact way the driver process ended was not recorded, so this report does not claim one.
 
 ## 10. Conclusion
 The pipeline survives loss of master and driver without data loss or duplicates, at the cost of a manual restart of about 3 minutes.
