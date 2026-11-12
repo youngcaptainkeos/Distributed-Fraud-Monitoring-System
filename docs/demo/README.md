@@ -1,5 +1,11 @@
 # Demo team running order
 
+> **Status update, 13 November 2026.** This working draft was written before the runs.
+> All five runs have since been completed and verified; the statements below about
+> pending work, run 6 and report templates are historical. Current results are in
+> [`../../evidence/README.md`](../../evidence/README.md).
+
+
 Working draft for the merged three-machine deployment. Final rehearsal and
 live baseline output comparison are still pending. These sheets describe the
 next run; they do not certify that it has succeeded.

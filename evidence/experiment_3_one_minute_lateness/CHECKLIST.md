@@ -22,3 +22,9 @@ Verify that events arriving out of order but within the one-minute watermark are
 
 ## Expected Result
 Events arriving within the configured lateness allowance are processed correctly.
+
+## Status
+Completed on 12 November 2026.
+
+## Result
+PASS (run 4). Seven rows arrived 30 to 48 s late in event time; all were processed and the output equals the ground truth. See [`REPORT.md`](REPORT.md).

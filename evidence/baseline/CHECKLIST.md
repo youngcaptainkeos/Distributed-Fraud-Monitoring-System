@@ -17,18 +17,18 @@ Establish the normal system behavior and output counts before conducting failure
 Reference report:
 verifier/reports/master_report_20261110_185030.txt
 
-## Part B — Pending Distributed Baseline
-Complete when the team VMs and streaming pipeline are available.
+## Part B — Distributed Baseline (completed, run 1)
+All steps were executed on 12 November 2026. Evidence is in `saatwik/`, `shashank/` and `sumukh/` and in [`REPORT.md`](REPORT.md).
 
-1. Start Kafka, Spark master, Spark workers and the streaming application.
-2. Confirm HDFS and Iceberg connectivity.
-3. Start the baseline Kafka topic (transactions-run1).
-4. Process the baseline transaction dataset.
-5. Record Spark batch IDs and processing progress.
-6. Confirm transaction decisions and account risk alerts are written to Iceberg.
-7. Verify dashboard LIVE mode against the baseline Iceberg tables.
-8. Compare output against the supplied ground truth.
-9. Record processing time, counts and any mismatches.
+- [x] 1. Start Kafka, Spark master, Spark workers and the streaming application.
+- [x] 2. Confirm HDFS and Iceberg connectivity.
+- [x] 3. Start the baseline Kafka topic (`transactions-run1`).
+- [x] 4. Process the baseline transaction dataset (2,000 messages, all acknowledged).
+- [x] 5. Record Spark batch IDs and processing progress (batches 1 to 6, commits 0 to 7).
+- [x] 6. Confirm transaction decisions and account risk alerts are written to Iceberg.
+- [x] 7. Verify dashboard LIVE mode against the baseline Iceberg tables.
+- [x] 8. Compare output against the supplied ground truth (0 mismatches).
+- [x] 9. Record processing time, counts and mismatches (last batch finished 77 s after the producer; longest batch 40.2 s).
 
 ## Expected Ground Truth
 - Unique transactions: 1990
@@ -52,5 +52,7 @@ Complete when the team VMs and streaming pipeline are available.
 - Independent verification report.
 
 ## Result
-Pending distributed execution.
-Do not mark PASS until Part B is completed and verified.
+PASS (run 1): 1,990 decisions and 129 alerts, identical to the ground truth.
+Run 6, the first attempt, failed the alert comparison because of a timezone
+defect (windows 5 h 30 min early); it was fixed and is kept as evidence under
+`sumukh/run6_first_attempt/`.

@@ -23,3 +23,9 @@ Verify that Spark recovers from executor failure without losing or duplicating t
 
 ## Expected Result
 The application continues processing after executor replacement, with no unexplained data loss or duplicate output.
+
+## Status
+Completed on 12 November 2026.
+
+## Result
+PASS (run 2). One executor was killed with `kill -9`; Spark replaced it within about 2 s, no task failed, no manual step, output exact (1,990 decisions, 129 alerts). See [`REPORT.md`](REPORT.md).

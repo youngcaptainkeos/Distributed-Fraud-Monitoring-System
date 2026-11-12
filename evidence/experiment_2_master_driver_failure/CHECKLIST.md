@@ -27,3 +27,9 @@ Test recovery after Spark master and streaming driver failure.
 The cluster and streaming application recover, and previously committed output is not duplicated.
 
 Note: Record whether driver recovery was automatic or required manual resubmission.
+
+## Status
+Completed on 12 November 2026.
+
+## Result
+PASS (run 3). Master stopped at 21:13:40 IST; the job was resubmitted with the same run id and resumed from the checkpoint at the unfinished batch 11. Recovery was manual (about 2 min 48 s to resubmit). Output exact, no duplicates. The exact way the driver process ended before the master stop was not recorded. See [`REPORT.md`](REPORT.md).

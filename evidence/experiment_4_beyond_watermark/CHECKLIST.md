@@ -21,3 +21,9 @@ Verify the handling of events arriving more than one minute behind the event-tim
 
 ## Expected Result
 Events beyond the configured watermark are not expected to update already-closed stateful windows. Record actual behavior and any sink-specific effects.
+
+## Status
+Completed on 12 November 2026.
+
+## Result
+Expected difference (run 5). Seven rows arrived 93 to 129 s late; exactly those 7 ids are absent from the decisions (1,983 of 1,990), alerts unchanged (129). Consistent with the 1-minute watermark plus deduplication state; observed in one run. See [`REPORT.md`](REPORT.md).
