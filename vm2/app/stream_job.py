@@ -11,6 +11,7 @@ Runs exclusively on VM2 (Spark Master/Driver).
 
 import logging
 import sys
+from datetime import timezone
 import pandas as pd
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col, from_json, to_timestamp
@@ -120,7 +121,7 @@ def process_micro_batch(batch_df, batch_id: int):
                 if pd.isna(v):
                     r[k] = None
                 elif isinstance(v, pd.Timestamp):
-                    r[k] = v.to_pydatetime()
+                    r[k] = v.to_pydatetime().replace(tzinfo=timezone.utc)
                 elif k in ("source_account", "destination_account", "observed_count", "count_threshold") and v is not None:
                     r[k] = int(v)
                 elif k in ("observed_amount_inr", "amount_threshold_inr") and v is not None:
